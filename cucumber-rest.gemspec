@@ -17,11 +17,18 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.extra_rdoc_files = ["README.md"]
 
+  s.add_runtime_dependency "activesupport", ">= 3.2"
   s.add_runtime_dependency "cucumber", "~> 1.3"
   s.add_runtime_dependency "multi_json", "~> 1.7"
   s.add_runtime_dependency "rspec", "~> 2.13"
 
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rack-test", "~> 0.6"
+  s.add_development_dependency "mechanize", "~> 2.7"
+  s.add_development_dependency "httpclient", "~> 2.3"
   s.add_development_dependency "rake", "~> 10.1"
+  s.add_development_dependency "sinatra"
+
+  s.add_development_dependency "yarjuf"
+  s.add_development_dependency "cucumber_spinner"
 end
