@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.extra_rdoc_files = ["README.md"]
 
+  s.post_install_message = ":: Coded for blinkbox books :: Love books, love code? Get in touch ::"
+
   s.add_runtime_dependency "activesupport", ">= 3.2"
   s.add_runtime_dependency "cucumber", "~> 1.3"
   s.add_runtime_dependency "multi_json", "~> 1.7"
