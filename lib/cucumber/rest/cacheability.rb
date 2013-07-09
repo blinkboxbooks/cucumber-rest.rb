@@ -5,47 +5,35 @@ module Cucumber
     module Cacheability
 
       def self.ensure_response_is_publicly_cacheable(args = {})
-        response = args[:response] || HttpCapture::RESPONSES.last
-        min_duration = args[:min_duration] || args[:duration] 
-        max_duration = args[:max_duration] || args[:duration]
-
-        ["Cache-Control", "Date", "Expires"].each { |h| raise "Required header '#{h}' is missing" if response[h].nil? }
+        response, min_duration, max_duration = extract_args(args)
+        ensure_cache_headers(response, false)
 
         cache_control = parse_cache_control(response["Cache-Control"])
-        ["public", "max-age"].each do |directive|
-          raise "Cache-Control should include the '#{directive}' directive" unless cache_control.has_key?(directive)
-        end
-        ["private", "no-cache", "no-store"].each do |directive|
-          raise "Cache-Control should not include the '#{directive}' directive" if cache_control.has_key?(directive)
-        end
+        ensure_cache_directives(cache_control, "public", "max-age")
+        prohibit_cache_directives(cache_control, "private", "no-cache", "no-store")
         
         date = DateTime.parse(response["Date"])
         expires = DateTime.parse(response["Expires"])
         max_age = cache_control["max-age"]
         raise "Date, Expires and Cache-Control:max-age are inconsistent" unless max_age == expires - date
 
-        raise "Pragma should not include the 'no-cache' directive" if response["Pragma"] =~ /\bno-cache\b/
-
-        if min_duration && max_age < min_duration
-          raise "Cache duration is #{max_age}s but expected at least #{min_duration}s"
-        end
-        if max_duration && max_age > max_duration
-          raise "Cache duration is #{max_age}s but expected no more than #{max_duration}s"
-        end
+        ensure_cache_duration(max_age, min_duration, max_duration)
       end
 
-      # def ensure_response_is_privately_cacheable(response = last_response)
-      #   cache_control = parse_cache_control(response.header["Cache-Control"].first)
-      #   require_cache_params(cache_control, "private", "max-age")
-      #   prohibit_cache_params(cache_control, "public", "no-cache", "no-store", "must-revalidate", "proxy-revalidate")
-      #   cache_control["max-age"].should > 0, "The Cache-Control:max-age param must be greater than zero"
-        
-      #   date, expires, last_modified = extract_dates(response)
-      #   expires.should <= date, "Expires should not be later than Date"
-      #   last_modified.should <= date, "Last-Modified should not be later than Date"
+      def self.ensure_response_is_privately_cacheable(args = {})
+        response, min_duration, max_duration = extract_args(args)
+        ensure_cache_headers(response, false)
 
-      #   response.header["Pragma"].count.should == 0
-      # end
+        cache_control = parse_cache_control(response["Cache-Control"])
+        ensure_cache_directives(cache_control, "private", "max-age")
+        prohibit_cache_directives(cache_control, "public", "no-cache", "no-store")
+        
+        date = DateTime.parse(response["Date"])
+        expires = DateTime.parse(response["Expires"]) rescue nil # invalid values are treated as < now, which is fine
+        raise "Expires should not be later than Date" if expires && expires > date
+
+        ensure_cache_duration(cache_control["max-age"], min_duration, max_duration)
+      end
 
       # def ensure_response_is_not_cacheable(response = last_response)
       #   cache_control = parse_cache_control(response.header["Cache-Control"].first)
@@ -61,6 +49,19 @@ module Cucumber
 
       private
 
+      def self.extract_args(args)
+        response = args[:response] || HttpCapture::RESPONSES.last
+        min_duration = args[:min_duration] || args[:duration] 
+        max_duration = args[:max_duration] || args[:duration]
+        return response, min_duration, max_duration
+      end
+
+      def self.ensure_cache_headers(response, expect_pragma_nocache)
+        ["Cache-Control", "Date", "Expires"].each { |h| raise "Required header '#{h}' is missing" if response[h].nil? }
+        has_pragma_nocache = (response["Pragma"] =~ /\bno-cache\b/) != nil
+        raise "Pragma should not include the 'no-cache' directive" unless has_pragma_nocache == expect_pragma_nocache
+      end
+
       def self.parse_cache_control(cache_control)
         cache_control.split(",").each_with_object({}) do |entry, hash|
           key, value = entry.split("=", 2).map(&:strip)
@@ -68,23 +69,25 @@ module Cucumber
         end
       end
 
-      def self.require_cache_params(cache_control, *keys)
-        keys.each { |key| raise "The Cache-Control header must include #{key}" if cache_control[key].nil? }
+      def self.ensure_cache_directives(cache_control, *directives)
+        directives.each do |directive|
+          raise "Cache-Control should include the '#{directive}' directive" unless cache_control.has_key?(directive)
+        end
       end
 
-      def self.prohibit_cache_params(cache_control, *keys)
-        keys.each { |key| raise "The Cache-Control header must not include #{key}" unless cache_control[key].nil? }
+      def self.prohibit_cache_directives(cache_control, *directives)
+        directives.each do |directive|
+          raise "Cache-Control should not include the '#{directive}' directive" if cache_control.has_key?(directive)
+        end
       end
 
-      def self.extract_dates(response)
-        date = date_from_header(response, "Date")
-        expires = date_from_header(response, "Expires")
-        last_modified = date_from_header(response, "Last-Modified")
-        return date, expires, last_modified
-      end
-
-      def self.date_from_header(response, name)
-        Time.parse(response[name])
+      def self.ensure_cache_duration(actual, min_expected, max_expected)
+        if min_expected && actual < min_expected
+          raise "Cache duration is #{actual}s but expected at least #{min_expected}s"
+        end
+        if max_expected && actual > max_expected
+          raise "Cache duration is #{actual}s but expected no more than #{max_expected}s"
+        end
       end
 
     end
