@@ -1,3 +1,3 @@
-source "http://gems.mobcastdev.local/"
+source "http://gems.mobcastdev.com/"
 source "https://rubygems.org"
 gemspec

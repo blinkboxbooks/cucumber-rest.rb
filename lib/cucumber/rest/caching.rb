@@ -3,7 +3,7 @@ require "http_capture"
 module Cucumber
   module Rest
     # Helper functions for checking the cacheability of responses.
-    module Cacheability
+    module Caching
 
       # Ensures that a response is privately cacheable.
       #
@@ -56,6 +56,13 @@ module Cucumber
         ensure_cache_duration(cache_control["max-age"], min_duration, max_duration)
       end
 
+      # Ensures that a response is not cacheable.
+      #
+      # This function uses a strict interpretation of RFC 2616, to ensure the widest interoperability with 
+      # implementations, including HTTP 1.0.
+      #
+      # @param response [HttpCapture::Response] The response to check. If not supplied defaults to the last response.
+      # @return [nil]
       def self.ensure_response_is_not_cacheable(args = {})
         response, * = extract_args(args)
         ensure_cache_headers(response, true)
@@ -73,8 +80,13 @@ module Cucumber
 
       def self.extract_args(args)
         response = args[:response] || HttpCapture::RESPONSES.last
+        if response.nil?
+          raise "There is no response to check. Have you required the right capture file from HttpCapture?"
+        end
+
         min_duration = args[:min_duration] || args[:duration] 
         max_duration = args[:max_duration] || args[:duration]
+        
         return response, min_duration, max_duration
       end
 
