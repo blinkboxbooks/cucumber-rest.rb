@@ -1,3 +1,4 @@
+require "date"
 require "http_capture"
 
 module Cucumber
@@ -20,13 +21,14 @@ module Cucumber
         ensure_cache_headers(response, false)
 
         cache_control = parse_cache_control(response["Cache-Control"])
-        ensure_cache_directives(cache_control, "public", "max-age")
+        ensure_cache_directives(cache_control, "max-age") # TODO: Should also have "public"
         prohibit_cache_directives(cache_control, "private", "no-cache", "no-store")
         
         date = DateTime.parse(response["Date"])
         expires = DateTime.parse(response["Expires"])
         max_age = cache_control["max-age"]
-        raise "Date, Expires and Cache-Control:max-age are inconsistent" unless max_age == expires - date
+        expected_max_age = ((expires - date) * 24 * 3600).to_i 
+        raise "Date, Expires and Cache-Control:max-age are inconsistent" unless max_age == expected_max_age
 
         ensure_cache_duration(max_age, min_duration, max_duration)
       end
