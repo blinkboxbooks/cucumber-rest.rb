@@ -8,7 +8,7 @@ Then(/^(?:it|the request) fails because it (?:is|was) invalid$/) do
   Cucumber::Rest::Status.ensure_status(400)
 end
 
-Then(/^(?:it|the request) fails because (.+) (?:is|was) unauthori[sz]ed$/) do
+Then(/^(?:it|the request) fails because (.+) (?:is|was|am|are) unauthori[sz]ed$/) do
   Cucumber::Rest::Status.ensure_status(401)
 end
 
