@@ -18,21 +18,32 @@ describe Cucumber::Rest::Caching, :caching do
 
   context "#ensure_response_is_publicly_cacheable" do
 
-    def generate_response(duration = 3600, date = DateTime.now)
+    def generate_response(duration = 3600, date = DateTime.now, age = nil)
       response = MockResponse.new
       response["Cache-Control"] = "public, max-age=#{duration}"
-      response["Date"] = date.strftime(RFC822_DATE_FORMAT)
       response["Expires"] = (date + (duration / (24.0 * 3600))).strftime(RFC822_DATE_FORMAT)
+      if age
+        date += age / 86400.0
+        response["Age"] = age.to_s if age
+      end
+      response["Date"] = date.strftime(RFC822_DATE_FORMAT)
       response.body = "test"
       response
     end
 
-    context "with non-cacheable responses" do
+    context "with cacheable responses" do
       it_behaves_like "a cache header inspector", :ensure_response_is_publicly_cacheable
 
       it "does not raise an error when the public cache headers are set correctly" do
         duration = 3600
         response = generate_response(duration)
+        Cucumber::Rest::Caching.ensure_response_is_publicly_cacheable(response: response, duration: duration)
+      end      
+
+      it "does not raise an error when the public cache headers are set correctly, including an Age header" do
+        duration = 3600
+        response = generate_response(duration, DateTime.now, 243)
+        p response
         Cucumber::Rest::Caching.ensure_response_is_publicly_cacheable(response: response, duration: duration)
       end
 
@@ -61,7 +72,15 @@ describe Cucumber::Rest::Caching, :caching do
         response["Expires"] = DateTime.now.strftime(RFC822_DATE_FORMAT)
         expect {
           Cucumber::Rest::Caching.ensure_response_is_publicly_cacheable(response: response)
-        }.to raise_error "Date, Expires and Cache-Control:max-age are inconsistent"
+        }.to raise_error "Age, Date, Expires and Cache-Control:max-age are inconsistent"
+      end
+
+      it "raises an error when Age, Date, Expires and Cache-Control:max-age are inconsistent" do
+        response = generate_response
+        response["Age"] = "5"
+        expect {
+          Cucumber::Rest::Caching.ensure_response_is_publicly_cacheable(response: response)
+        }.to raise_error "Age, Date, Expires and Cache-Control:max-age are inconsistent"
       end
 
       it "raises an error when the Pragma header includes the no-cache directive" do
