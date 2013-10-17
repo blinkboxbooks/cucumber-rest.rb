@@ -21,14 +21,17 @@ module Cucumber
         ensure_cache_headers(response, false)
 
         cache_control = parse_cache_control(response["Cache-Control"])
-        ensure_cache_directives(cache_control, "max-age") # TODO: Should also have "public"
+        ensure_cache_directives(cache_control, "public", "max-age")
         prohibit_cache_directives(cache_control, "private", "no-cache", "no-store")
         
+        age = response["Age"].to_i
         date = DateTime.parse(response["Date"])
         expires = DateTime.parse(response["Expires"])
         max_age = cache_control["max-age"]
-        expected_max_age = ((expires - date) * 24 * 3600).to_i 
-        raise "Date, Expires and Cache-Control:max-age are inconsistent" unless max_age == expected_max_age
+        expected_max_age = age + ((expires - date) * 24 * 3600).to_i
+        unless (max_age - expected_max_age).abs <= 1 # 1 second leeway
+          raise "Age, Date, Expires and Cache-Control:max-age are inconsistent" 
+        end
 
         ensure_cache_duration(max_age, min_duration, max_duration)
       end
