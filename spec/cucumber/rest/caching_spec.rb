@@ -43,7 +43,6 @@ describe Cucumber::Rest::Caching, :caching do
       it "does not raise an error when the public cache headers are set correctly, including an Age header" do
         duration = 3600
         response = generate_response(duration, DateTime.now, 243)
-        p response
         Cucumber::Rest::Caching.ensure_response_is_publicly_cacheable(response: response, duration: duration)
       end
 

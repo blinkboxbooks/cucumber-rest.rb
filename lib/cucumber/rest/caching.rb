@@ -29,7 +29,7 @@ module Cucumber
         expires = DateTime.parse(response["Expires"])
         max_age = cache_control["max-age"]
         expected_max_age = age + ((expires - date) * 24 * 3600).to_i
-        unless max_age >= expected_max_age - 1 && max_age <= expected_max_age + 1 # 1 second leeway
+        unless (max_age - expected_max_age).abs <= 1 # 1 second leeway
           raise "Age, Date, Expires and Cache-Control:max-age are inconsistent" 
         end
 
