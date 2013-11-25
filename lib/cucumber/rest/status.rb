@@ -8,7 +8,12 @@ module Cucumber
 
       def self.ensure_status(expected)
         actual = HttpCapture::RESPONSES.last.status
-        raise error_message(actual) unless expected === actual
+        unless expected == actual
+          actual_name = Rack::Utils::HTTP_STATUS_CODES[actual]
+          expected_name = Rack::Utils::HTTP_STATUS_CODES[expected]
+          message = "Request status was #{actual} #{actual_name}; expected #{expected} #{expected_name}"
+          raise message
+        end
       end
 
       def self.ensure_status_class(expected)
@@ -19,15 +24,12 @@ module Cucumber
               when :client_error then 400
               when :server_error then 500
               end
-        ensure_status(min..(min + 99))
+        expected_range = min..(min + 99)
+        unless expected_range === actual
+          message = "Request status was #{actual} #{Rack::Utils::HTTP_STATUS_CODES[actual]}; expected #{expected_range}"
+          raise message
+        end
       end
-
-      private
-
-      def self.error_message(actual)
-        "Request error was '#{Rack::Utils::HTTP_STATUS_CODES[actual]}' (status #{actual})"
-      end
-
     end
   end
 end
