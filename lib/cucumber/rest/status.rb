@@ -6,8 +6,8 @@ module Cucumber
     # Helper functions for checking the cacheability of responses.
     module Status
 
-      def self.ensure_status(expected)
-        actual = HttpCapture::RESPONSES.last.status
+      def self.ensure_status(expected, response: HttpCapture::RESPONSES.last)
+        actual = response.status
         unless expected == actual
           actual_name = Rack::Utils::HTTP_STATUS_CODES[actual]
           expected_name = Rack::Utils::HTTP_STATUS_CODES[expected]
@@ -16,7 +16,7 @@ module Cucumber
         end
       end
 
-      def self.ensure_status_class(expected)
+      def self.ensure_status_class(expected, response: HttpCapture::RESPONSES.last)
         min = case expected
               when :informational then 100
               when :success then 200
@@ -24,7 +24,9 @@ module Cucumber
               when :client_error then 400
               when :server_error then 500
               end
-        expected_range = min..(min + 99)
+        max = min + 99
+        expected_range = min..max
+        actual = response.status
         unless expected_range === actual
           message = "Request status was #{actual} #{Rack::Utils::HTTP_STATUS_CODES[actual]}; expected #{expected_range}"
           raise message
