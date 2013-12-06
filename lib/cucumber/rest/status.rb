@@ -7,7 +7,7 @@ module Cucumber
     module Status
 
       def self.ensure_status(expected, response: HttpCapture::RESPONSES.last)
-        actual = response.last.status
+        actual = response.status
         unless expected == actual
           actual_name = Rack::Utils::HTTP_STATUS_CODES[actual]
           expected_name = Rack::Utils::HTTP_STATUS_CODES[expected]
