@@ -1,4 +1,3 @@
-require "yarjuf"
 require "cucumber"
 
 RSpec.configure do |c|

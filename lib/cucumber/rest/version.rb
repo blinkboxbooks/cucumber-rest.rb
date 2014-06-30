@@ -1,5 +1,5 @@
 module Cucumber
   module Rest
-    VERSION = "0.0.9"
+    VERSION = File.read(File.join(__dir__,"../../../../VERSION")) rescue "0.0.9"
   end
 end

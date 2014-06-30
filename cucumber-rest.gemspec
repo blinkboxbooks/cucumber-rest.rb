@@ -29,6 +29,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rake", "~> 10.1"
 
-  s.add_development_dependency "yarjuf"
   s.add_development_dependency "cucumber_spinner"
 end
