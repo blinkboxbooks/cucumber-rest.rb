@@ -81,6 +81,13 @@ module Cucumber
         raise "Expires should not be later than Date" if expires && expires > date
       end
 
+			def self.parse_httpdate(date)
+				if (date.nil? || date.empty?)
+					raise RuntimeError, "Empty date value"
+				end
+				DateTime.httpdate(date)
+			end
+
       private
 
       def self.extract_args(args)
