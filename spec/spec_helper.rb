@@ -5,6 +5,8 @@ RSpec.configure do |c|
 end
 
 RFC822_DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+RFC850_DATE_FORMAT = "%A, %d-%b-%y %H:%M:%S GMT"
+ANSI_C_DATE_FORMAT = "%a %b %e %H:%M:%S %Y"
 
 # A mock response class that looks like HttpCapture::Response
 class MockResponse

@@ -262,4 +262,43 @@ describe Cucumber::Rest::Caching, :caching do
 
   end
 
+	context "#parse_httpdate" do
+
+		it "doesn't raise an error when an RFC822 date is passed" do
+			date = DateTime.now.strftime(RFC822_DATE_FORMAT)
+			Cucumber::Rest::Caching.parse_httpdate(date)
+		end
+
+		it "doesn't raise an error when an ANCI C asctime format date is passed" do
+			date = DateTime.now.strftime(ANSI_C_DATE_FORMAT)
+			Cucumber::Rest::Caching.parse_httpdate(date)
+		end
+
+		it "doesn't raise an error when an RFC850 date is passed" do
+			date = DateTime.now.strftime(RFC850_DATE_FORMAT)
+			Cucumber::Rest::Caching.parse_httpdate(date)
+		end
+
+		it "raises an error when a non-English date is passed" do
+			date = "ma, 14 heinä 2014 16:08:33 GMT"
+			expect {
+				Cucumber::Rest::Caching.parse_httpdate(date)
+			}.to raise_error("invalid date")
+		end
+
+		it "raises an error when a non-GMT date is passed" do
+			date = "Mon, 14 Jul 2014 16:33:04 +0100"
+			expect {
+				Cucumber::Rest::Caching.parse_httpdate(date)
+			}.to raise_error("invalid date")
+		end
+
+		it "raises an error when empty date values are passed" do
+			expect {
+				Cucumber::Rest::Caching.parse_httpdate("")
+			}.to raise_error("Empty date value")
+		end
+
+	end
+
 end
