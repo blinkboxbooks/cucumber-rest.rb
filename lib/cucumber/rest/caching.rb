@@ -6,6 +6,8 @@ module Cucumber
     # Helper functions for checking the cacheability of responses.
     module Caching
 
+			class EmptyHTTPDate < RuntimeError; end
+
       # Ensures that a response is privately cacheable.
       #
       # This function uses a strict interpretation of RFC 2616 to ensure the widest interoperability with 
@@ -25,8 +27,8 @@ module Cucumber
         prohibit_cache_directives(cache_control, "private", "no-cache", "no-store")
         
         age = response["Age"].to_i
-        date = DateTime.parse(response["Date"])
-        expires = DateTime.parse(response["Expires"])
+        date = parse_httpdate(response["Date"])
+        expires = parse_expires_httpdate(response["Expires"])
         max_age = cache_control["max-age"]
         expected_max_age = age + ((expires - date) * 24 * 3600).to_i
         unless (max_age - expected_max_age).abs <= 1 # 1 second leeway
@@ -54,8 +56,8 @@ module Cucumber
         ensure_cache_directives(cache_control, "private", "max-age")
         prohibit_cache_directives(cache_control, "public", "no-cache", "no-store")
         
-        date = DateTime.parse(response["Date"])
-        expires = DateTime.parse(response["Expires"]) rescue nil # invalid values are treated as < now, which is fine
+        date = parse_httpdate(response["Date"])
+				expires = parse_expires_httpdate(response["Expires"]) 
         raise "Expires should not be later than Date" if expires && expires > date
 
         ensure_cache_duration(cache_control["max-age"], min_duration, max_duration)
@@ -76,17 +78,10 @@ module Cucumber
         ensure_cache_directives(cache_control, "no-store")
         prohibit_cache_directives(cache_control, "public", "private", "max-age") # TODO: prohibit no-cache?
 
-        date = DateTime.parse(response["Date"])
-        expires = DateTime.parse(response["Expires"]) rescue nil # invalid values are treated as < now, which is fine
+        date = parse_httpdate(response["Date"])
+        expires = parse_expires_httpdate(response["Expires"]) rescue nil # invalid values are treated as < now, which is fine
         raise "Expires should not be later than Date" if expires && expires > date
       end
-
-			def self.parse_httpdate(date)
-				if (date.nil? || date.empty?)
-					raise RuntimeError, "Empty date value"
-				end
-				DateTime.httpdate(date)
-			end
 
       private
 
@@ -137,6 +132,22 @@ module Cucumber
           raise "Cache duration is #{actual}s but expected no more than #{max_expected}s"
         end
       end
+
+			def self.parse_httpdate(date)
+				if (date.nil? || date.empty?)
+					raise EmptyHTTPDate, "Empty date value"
+				end
+				DateTime.httpdate(date)
+			end
+
+			def self.parse_expires_httpdate(date)
+				begin
+					parse_httpdate(date)
+				rescue EmptyHTTPDate, ArgumentError => e
+					warn "Invalid Expires header value, handling as a past value"
+					DateTime.httpdate()
+				end
+			end
 
     end
   end
