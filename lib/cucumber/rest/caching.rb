@@ -6,7 +6,7 @@ module Cucumber
     # Helper functions for checking the cacheability of responses.
     module Caching
 
-			class EmptyHTTPDate < RuntimeError; end
+			class EmptyHTTPDateError < RuntimeError; end
 
       # Ensures that a response is privately cacheable.
       #
@@ -134,16 +134,14 @@ module Cucumber
       end
 
 			def self.parse_httpdate(date)
-				if (date.nil? || date.empty?)
-					raise EmptyHTTPDate, "Empty date value"
-				end
+				raise EmptyHTTPDateError, "Empty date value" if date.empty?
 				DateTime.httpdate(date)
 			end
 
 			def self.parse_expires_httpdate(date)
 				begin
 					parse_httpdate(date)
-				rescue EmptyHTTPDate, ArgumentError => e
+				rescue EmptyHTTPDateError, ArgumentError => e
 					warn "Invalid Expires header value, handling as a past value"
 					DateTime.httpdate()
 				end

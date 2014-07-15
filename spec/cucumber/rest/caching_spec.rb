@@ -299,12 +299,6 @@ describe Cucumber::Rest::Caching, :caching do
 			}.to raise_error("Empty date value")
 		end
 
-		it "handles having nil values being passed as being empty" do
-			expect {
-				Cucumber::Rest::Caching.parse_httpdate(nil)
-			}.to raise_error("Empty date value")
-		end
-
 	end
 
 end
