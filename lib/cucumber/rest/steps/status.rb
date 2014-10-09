@@ -1,6 +1,6 @@
 require "cucumber/rest/status"
 
-Then(/^the request (?:is|was) successful$/) do  
+Then(/^the request (?:is|was) successful$/) do
   Cucumber::Rest::Status.ensure_status_class(:success)
 end
 
@@ -22,4 +22,8 @@ end
 
 Then(/^(?:it|the request) fails because there (?:is|was) a conflict(?: with .+)?$/) do
   Cucumber::Rest::Status.ensure_status(409)
+end
+
+Then(/^(?:it|the request) fails because the (?:.+) (?:is|was|has) gone$/) do
+  Cucumber::Rest::Status.ensure_status(410)
 end
