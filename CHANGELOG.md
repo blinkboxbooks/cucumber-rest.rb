@@ -1,5 +1,11 @@
 # Change log
 
+## 0.1.2 ([#19](https://git.mobcastdev.com/TEST/cucumber-rest/pull/19) 2014-10-09 17:28:41)
+
+410 Gone step
+
+Patch
+
 ## 0.1.1 ([#18](https://git.mobcastdev.com/TEST/cucumber-rest/pull/18) 2014-07-15 10:52:31)
 
 CP-1598 - Make Cucumber-Rest stricter about what it considers a valid Date in HTTP headers
