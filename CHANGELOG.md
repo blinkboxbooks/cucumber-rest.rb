@@ -1,5 +1,13 @@
 # Change log
 
+## 0.1.3 ([#20](https://git.mobcastdev.com/TEST/cucumber-rest/pull/20) 2014-10-13 10:21:36)
+
+Fix where the version file is read from
+
+Patch
+
+VERSION file location was misdefined as one level too deep. If the VERSION file can't be found in the right folder, default to a more sane "0.0.0".
+
 ## 0.1.2 ([#19](https://git.mobcastdev.com/TEST/cucumber-rest/pull/19) 2014-10-09 17:28:41)
 
 410 Gone step
