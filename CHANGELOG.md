@@ -1,5 +1,13 @@
 # Change log
 
+## 0.1.4 ([#21](https://git.mobcastdev.com/TEST/cucumber-rest/pull/21) 2014-10-14 16:38:44)
+
+RSpec 3
+
+### Improvements
+
+- Move to RSpec 3
+
 ## 0.1.3 ([#20](https://git.mobcastdev.com/TEST/cucumber-rest/pull/20) 2014-10-13 10:21:36)
 
 Fix where the version file is read from
