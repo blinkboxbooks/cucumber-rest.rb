@@ -1,5 +1,11 @@
 # Change log
 
+## 0.1.6 ([#23](https://git.mobcastdev.com/TEST/cucumber-rest/pull/23) 2014-12-08 16:18:09)
+
+Made the item specified that is being create non capturing
+
+A patch to make the user specified resource being created in the step's regex non-capturing.
+
 ## 0.1.5 ([#22](https://git.mobcastdev.com/TEST/cucumber-rest/pull/22) 2014-12-01 14:58:07)
 
 adding step for checking 201 Created response
