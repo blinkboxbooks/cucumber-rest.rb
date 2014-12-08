@@ -5,7 +5,7 @@ Then(/^the request (?:is|was) successful$/) do
 end
 
 Then(/^the request (?:is|was) successful and (?:a resource|.+) was created$/) do
-  Cucumber::Rest::Status.ensure_status_class(201)
+  Cucumber::Rest::Status.ensure_status(201)
 end
 
 Then(/^(?:it|the request) fails because it (?:is|was) invalid$/) do
