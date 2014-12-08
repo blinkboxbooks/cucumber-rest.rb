@@ -4,7 +4,7 @@ Then(/^the request (?:is|was) successful$/) do
   Cucumber::Rest::Status.ensure_status_class(:success)
 end
 
-Then(/^the request (?:is|was) successful and (?:(.+)|a resource) was created$/) do
+Then(/^the request (?:is|was) successful and (?:a resource|.+) was created$/) do
   Cucumber::Rest::Status.ensure_status_class(201)
 end
 
