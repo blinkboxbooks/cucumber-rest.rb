@@ -1,5 +1,11 @@
 # Change log
 
+## 0.1.7 ([#24](https://git.mobcastdev.com/TEST/cucumber-rest/pull/24) 2014-12-08 16:47:02)
+
+Using `ensure_status` instead of `ensure_status_class`
+
+A patch to fix checking the status with the correct method.
+
 ## 0.1.6 ([#23](https://git.mobcastdev.com/TEST/cucumber-rest/pull/23) 2014-12-08 16:18:09)
 
 Made the item specified that is being create non capturing
