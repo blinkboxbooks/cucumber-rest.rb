@@ -1,5 +1,15 @@
 # Change log
 
+## 0.1.8 ([#25](https://git.mobcastdev.com/TEST/cucumber-rest/pull/25) 2014-12-10 16:31:08)
+
+Http 204 status codes
+
+Patch
+
+Add support for handling HTTP 204 responses, checking that the body is empty.
+
+Also whitespace changes because hard tabs are bad, mmkay?
+
 ## 0.1.7 ([#24](https://git.mobcastdev.com/TEST/cucumber-rest/pull/24) 2014-12-08 16:47:02)
 
 Using `ensure_status` instead of `ensure_status_class`
