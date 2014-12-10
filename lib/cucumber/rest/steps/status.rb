@@ -1,4 +1,5 @@
 require "cucumber/rest/status"
+require "cucumber/rest/body"
 
 Then(/^the request (?:is|was) successful$/) do
   Cucumber::Rest::Status.ensure_status_class(:success)
@@ -6,6 +7,11 @@ end
 
 Then(/^the request (?:is|was) successful and (?:a resource|.+) was created$/) do
   Cucumber::Rest::Status.ensure_status(201)
+end
+
+Then(/^the request (?:is|was) successful and (?:no|an empty) response body is returned$/) do
+  Cucumber::Rest::Status.ensure_status(204)
+  Cucumber::Rest::Body.ensure_empty
 end
 
 Then(/^(?:it|the request) fails because it (?:is|was) invalid$/) do

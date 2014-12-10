@@ -6,11 +6,11 @@ module Cucumber
     # Helper functions for checking the cacheability of responses.
     module Caching
 
-			class EmptyHTTPDateError < RuntimeError; end
+      class EmptyHTTPDateError < RuntimeError; end
 
       # Ensures that a response is privately cacheable.
       #
-      # This function uses a strict interpretation of RFC 2616 to ensure the widest interoperability with 
+      # This function uses a strict interpretation of RFC 2616 to ensure the widest interoperability with
       # implementations, including HTTP 1.0.
       #
       # @param response [HttpCapture::Response] The response to check. If not supplied defaults to the last response.
@@ -25,14 +25,14 @@ module Cucumber
         cache_control = parse_cache_control(response["Cache-Control"])
         ensure_cache_directives(cache_control, "public", "max-age")
         prohibit_cache_directives(cache_control, "private", "no-cache", "no-store")
-        
+
         age = response["Age"].to_i
         date = parse_httpdate(response["Date"])
         expires = parse_expires_httpdate(response["Expires"])
         max_age = cache_control["max-age"]
         expected_max_age = age + ((expires - date) * 24 * 3600).to_i
         unless (max_age - expected_max_age).abs <= 1 # 1 second leeway
-          raise "Age, Date, Expires and Cache-Control:max-age are inconsistent" 
+          raise "Age, Date, Expires and Cache-Control:max-age are inconsistent"
         end
 
         ensure_cache_duration(max_age, min_duration, max_duration)
@@ -55,9 +55,9 @@ module Cucumber
         cache_control = parse_cache_control(response["Cache-Control"])
         ensure_cache_directives(cache_control, "private", "max-age")
         prohibit_cache_directives(cache_control, "public", "no-cache", "no-store")
-        
+
         date = parse_httpdate(response["Date"])
-				expires = parse_expires_httpdate(response["Expires"]) 
+        expires = parse_expires_httpdate(response["Expires"])
         raise "Expires should not be later than Date" if expires && expires > date
 
         ensure_cache_duration(cache_control["max-age"], min_duration, max_duration)
@@ -65,7 +65,7 @@ module Cucumber
 
       # Ensures that a response is not cacheable.
       #
-      # This function uses a strict interpretation of RFC 2616, to ensure the widest interoperability with 
+      # This function uses a strict interpretation of RFC 2616, to ensure the widest interoperability with
       # implementations, including HTTP 1.0.
       #
       # @param response [HttpCapture::Response] The response to check. If not supplied defaults to the last response.
@@ -91,17 +91,17 @@ module Cucumber
           raise "There is no response to check. Have you required the right capture file from HttpCapture?"
         end
 
-        min_duration = args[:min_duration] || args[:duration] 
+        min_duration = args[:min_duration] || args[:duration]
         max_duration = args[:max_duration] || args[:duration]
-        
+
         return response, min_duration, max_duration
       end
 
       def self.ensure_cache_headers(response, pragma_nocache)
         ["Cache-Control", "Date", "Expires"].each { |h| raise "Required header '#{h}' is missing" if response[h].nil? }
-        
+
         unless (/\bno-cache\b/ === response["Pragma"]) == pragma_nocache
-          raise "Pragma should #{pragma_nocache ? "" : "not "}include the 'no-cache' directive" 
+          raise "Pragma should #{pragma_nocache ? "" : "not "}include the 'no-cache' directive"
         end
       end
 
@@ -133,19 +133,19 @@ module Cucumber
         end
       end
 
-			def self.parse_httpdate(date)
-				raise EmptyHTTPDateError, "Empty date value" if date.empty?
-				DateTime.httpdate(date)
-			end
+      def self.parse_httpdate(date)
+        raise EmptyHTTPDateError, "Empty date value" if (date.empty? || date.nil?)
+        DateTime.httpdate(date)
+      end
 
-			def self.parse_expires_httpdate(date)
-				begin
-					parse_httpdate(date)
-				rescue EmptyHTTPDateError, ArgumentError => e
-					warn "Invalid Expires header value, handling as a past value"
-					DateTime.httpdate()
-				end
-			end
+      def self.parse_expires_httpdate(date)
+        begin
+          parse_httpdate(date)
+        rescue EmptyHTTPDateError, ArgumentError => e
+          warn "Invalid Expires header value, handling as a past value"
+          DateTime.httpdate()
+        end
+      end
 
     end
   end
