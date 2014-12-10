@@ -134,7 +134,7 @@ module Cucumber
       end
 
       def self.parse_httpdate(date)
-        raise EmptyHTTPDateError, "Empty date value" if date.empty?
+        raise EmptyHTTPDateError, "Empty date value" if (date.empty? || date.nil?)
         DateTime.httpdate(date)
       end
 
