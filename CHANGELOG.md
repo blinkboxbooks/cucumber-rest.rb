@@ -1,5 +1,13 @@
 # Change log
 
+## 0.1.9 ([#26](https://git.mobcastdev.com/TEST/cucumber-rest/pull/26) 2014-12-16 11:09:35)
+
+Add a step for checking we specifically return a HTTP 202
+
+Patch
+
+ * Adds a step def for checking HTTP 202 responses
+
 ## 0.1.8 ([#25](https://git.mobcastdev.com/TEST/cucumber-rest/pull/25) 2014-12-10 16:31:08)
 
 Http 204 status codes
