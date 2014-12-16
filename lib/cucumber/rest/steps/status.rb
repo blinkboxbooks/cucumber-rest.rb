@@ -41,3 +41,7 @@ end
 Then(/^(?:it|the request) fails because the (?:.+) (?:is|was|has) gone$/) do
   Cucumber::Rest::Status.ensure_status(410)
 end
+
+Then(/^(?:it|the request) fails because the (?:.+) (?:is|was) not implemented$/) do
+  Cucumber::Rest::Status.ensure_status(501)
+end
