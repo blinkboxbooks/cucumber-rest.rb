@@ -1,5 +1,13 @@
 # Change log
 
+## 0.1.10 ([#27](https://git.mobcastdev.com/TEST/cucumber-rest/pull/27) 2014-12-16 13:37:19)
+
+Step def for asserting HTTP 501 responses
+
+Patch
+
+ * Step def for asserting HTTP 501 responses
+
 ## 0.1.9 ([#26](https://git.mobcastdev.com/TEST/cucumber-rest/pull/26) 2014-12-16 11:09:35)
 
 Add a step for checking we specifically return a HTTP 202
