@@ -9,6 +9,10 @@ Then(/^the request (?:is|was) successful and (?:a resource|.+) was created$/) do
   Cucumber::Rest::Status.ensure_status(201)
 end
 
+Then(/^the request (?:is|was) successfully accepted$/) do
+  Cucumber::Rest::Status.ensure_status(202)
+end
+
 Then(/^the request (?:is|was) successful and (?:no|an empty) response body is returned$/) do
   Cucumber::Rest::Status.ensure_status(204)
   Cucumber::Rest::Body.ensure_empty
