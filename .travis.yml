@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 2.0.0
+  - 2.1.2
+deploy:
+  provider: rubygems
+  api_key:
+    secure: DfssT15CddiWJaakPGmBqroMixeyvSDtJsDa6dXW1qfO7gnoYQ1VGc0pevMs/1NsJBS/LDPGMN30Y+aTQ/JceiItp6O4LZaWN894C9+tXb3/9QKmTUFQkLqsb44lQeuRESPTtmtVKqMwbaLfiya6BActAfQvNdGY1JmBNAQsx8g=
+  gem: cucumber-rest
+  on:
+    repo: blinkboxbooks/cucumber-rest.rb
+    branch: master
