@@ -1,9 +1,8 @@
 ($LOAD_PATH << File.expand_path("../lib", __FILE__)).uniq!
-require "cucumber/rest/version"
 
 Gem::Specification.new do |s|
   s.name = "cucumber-rest"
-  s.version = Cucumber::Rest::VERSION
+  s.version = File.read("VERSION").strip rescue "0.0.0-unknown"
   s.summary = "Cucumber steps and support for testing RESTful services."
   s.description = "A set of Cucumber step definitions and support functions which encapsulate common RESTful functionality."
   s.author = "blinkbox books"
